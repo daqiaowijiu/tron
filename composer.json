@@ -18,7 +18,8 @@
     ],
     "require": {
         "php": ">=8.0",
-        "fenguoz/tron-api": "~1.1",
+        "daqiaowijiu/web3.php": "^1.0.0",
+        "daqiaowijiu/tron-api": "^1.0.0",
         "ionux/phactor": "1.0.8",
         "kornrunner/keccak": "~1.0"
     },
