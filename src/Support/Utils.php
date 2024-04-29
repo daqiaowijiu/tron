@@ -4,7 +4,7 @@ namespace Tron\Support;
 
 use InvalidArgumentException;
 use kornrunner\Keccak;
-use phpseclib\Math\BigInteger;
+use phpseclib3\Math\BigInteger;
 use Psr\Http\Message\StreamInterface;
 
 class Utils
@@ -285,9 +285,9 @@ class Utils
     public static function divideDisplay(array $divResult, int $decimals)
     {
         list($bnq, $bnr) = $divResult;
-        $ret = "$bnq->value";
-        if ($bnr->value > 0) {
-            $ret .= '.' . rtrim(sprintf("%0{$decimals}d", $bnr->value), '0');
+        $ret = "{$bnq->toString()}";
+        if ($bnr->toString() > 0) {
+            $ret .= '.' . rtrim(sprintf("%0{$decimals}d", $bnr->toString()), '0');
         }
 
         return $ret;
@@ -304,17 +304,21 @@ class Utils
 
             $whole = $whole->multiply($bnt);
 
-            switch (MATH_BIGINTEGER_MODE) {
-                case $whole::MODE_GMP:
-                    static $two;
-                    $powerBase = gmp_pow(gmp_init(10), (int) $fractionLength);
-                    break;
-                case $whole::MODE_BCMATH:
-                    $powerBase = bcpow('10', (string) $fractionLength, 0);
-                    break;
-                default:
-                    $powerBase = pow(10, (int) $fractionLength);
-                    break;
+            if(defined('MATH_BIGINTEGER_MODE')){
+                switch (MATH_BIGINTEGER_MODE) {
+                    case $whole::MODE_GMP:
+                        static $two;
+                        $powerBase = gmp_pow(gmp_init(10), (int) $fractionLength);
+                        break;
+                    case $whole::MODE_BCMATH:
+                        $powerBase = bcpow('10', (string) $fractionLength, 0);
+                        break;
+                    default:
+                        $powerBase = pow(10, (int) $fractionLength);
+                        break;
+                }
+            }else{
+                $powerBase = pow(10, (int) $fractionLength);
             }
             $base = new BigInteger($powerBase);
             $fraction = $fraction->multiply($bnt)->divide($base)[0];
